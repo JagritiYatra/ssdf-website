@@ -18,8 +18,8 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
     if (!cardRef.current) return;
     try {
       const canvas = await html2canvas(cardRef.current, {
-        scale: 2,
-        backgroundColor: null,
+        scale: 3,
+        backgroundColor: "#ffffff",
         useCORS: true,
       });
       const link = document.createElement("a");
@@ -37,42 +37,64 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
     professional: "Professional",
   }[registration.category];
 
+  const verifyUrl = `https://ssdf.org.in/verify/${registration.id}`;
+
   return (
     <div>
-      {/* ID Card */}
+      {/* ID Card — all inline styles for html2canvas compatibility */}
       <div
         ref={cardRef}
-        className="mx-auto bg-white rounded-xl overflow-hidden shadow-2xl"
-        style={{ width: 525, height: 325 }}
+        style={{
+          width: 600,
+          height: 340,
+          margin: "0 auto",
+          backgroundColor: "#ffffff",
+          borderRadius: 12,
+          overflow: "hidden",
+          fontFamily: "Arial, Helvetica, sans-serif",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
+        }}
       >
         {/* Header */}
         <div
-          className="px-6 py-3 flex items-center gap-3"
-          style={{ backgroundColor: "#1B2D4F" }}
+          style={{
+            backgroundColor: "#1B2D4F",
+            padding: "10px 24px",
+            display: "flex",
+            alignItems: "center",
+          }}
         >
           <img
             src="/images/logo-transparent.png"
             alt="SSDF"
-            style={{ width: 36, height: 36 }}
+            style={{ width: 36, height: 36, marginRight: 10, borderRadius: 4 }}
           />
-          <div>
-            <p
-              className="font-bold text-sm"
-              style={{ color: "#F0C030" }}
+          <div style={{ flex: 1 }}>
+            <div
+              style={{
+                color: "#F0C030",
+                fontWeight: 700,
+                fontSize: 14,
+                lineHeight: "18px",
+              }}
             >
               CANSAT INDIA 2026
-            </p>
-            <p className="text-xs" style={{ color: "#9FAFD0" }}>
+            </div>
+            <div style={{ color: "#9FAFD0", fontSize: 11, lineHeight: "14px" }}>
               Shrinarayani Science Development Foundation
-            </p>
+            </div>
           </div>
-          <div className="ml-auto text-right">
-            <p
-              className="font-mono font-bold text-sm"
-              style={{ color: "#F0C030" }}
-            >
-              {registration.id}
-            </p>
+          <div
+            style={{
+              color: "#F0C030",
+              fontWeight: 700,
+              fontSize: 12,
+              fontFamily: "monospace",
+              textAlign: "right",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {registration.id}
           </div>
         </div>
 
@@ -80,17 +102,24 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
         <div style={{ height: 3, backgroundColor: "#F0C030" }} />
 
         {/* Body */}
-        <div className="px-6 py-4 flex gap-5">
+        <div style={{ padding: "14px 24px", display: "flex" }}>
           {/* Photo + QR */}
-          <div className="flex flex-col items-center gap-3">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginRight: 20,
+            }}
+          >
             {registration.photoUrl ? (
               <img
                 src={registration.photoUrl}
                 alt={registration.fullName}
                 crossOrigin="anonymous"
                 style={{
-                  width: 90,
-                  height: 90,
+                  width: 88,
+                  height: 88,
                   borderRadius: "50%",
                   objectFit: "cover",
                   border: "3px solid #1B2D4F",
@@ -99,8 +128,8 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
             ) : (
               <div
                 style={{
-                  width: 90,
-                  height: 90,
+                  width: 88,
+                  height: 88,
                   borderRadius: "50%",
                   backgroundColor: "#E8EDF5",
                   border: "3px solid #1B2D4F",
@@ -108,50 +137,65 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#1B2D4F",
-                  fontWeight: "bold",
+                  fontWeight: 700,
                   fontSize: 28,
                 }}
               >
                 {registration.fullName.charAt(0)}
               </div>
             )}
-            <QRCodeSVG
-              value={`https://ssdf.org.in/verify/${registration.id}`}
-              size={70}
-              fgColor="#1B2D4F"
-              bgColor="transparent"
-            />
+            <div style={{ marginTop: 10 }}>
+              <QRCodeSVG
+                value={verifyUrl}
+                size={80}
+                fgColor="#1B2D4F"
+                bgColor="#ffffff"
+              />
+            </div>
           </div>
 
           {/* Details */}
-          <div className="flex-1">
-            <h3
-              className="font-bold text-xl mb-3"
-              style={{ color: "#1B2D4F" }}
+          <div style={{ flex: 1, paddingTop: 2 }}>
+            <div
+              style={{
+                color: "#1B2D4F",
+                fontWeight: 700,
+                fontSize: 19,
+                lineHeight: "24px",
+                marginBottom: 10,
+              }}
             >
               {registration.fullName}
-            </h3>
-            <div className="space-y-1.5">
-              <DetailRow label="Team" value={registration.teamName} />
-              <DetailRow label="Institution" value={registration.institution} />
-              <DetailRow label="Category" value={categoryLabel} />
-              <DetailRow label="State" value={registration.state} />
-              <DetailRow
-                label="Members"
-                value={registration.teamMembers.map((m) => m.name).join(", ")}
-              />
             </div>
+            <DetailRow label="Team" value={registration.teamName} />
+            <DetailRow label="Institution" value={registration.institution} />
+            <DetailRow label="Category" value={categoryLabel} />
+            <DetailRow label="State" value={registration.state} />
+            <DetailRow
+              label="Members"
+              value={registration.teamMembers.map((m) => m.name).join(", ")}
+            />
           </div>
         </div>
 
         {/* Footer */}
         <div
-          className="px-6 py-2 text-center"
-          style={{ backgroundColor: "#1B2D4F" }}
+          style={{
+            backgroundColor: "#1B2D4F",
+            padding: "8px 24px",
+            textAlign: "center",
+          }}
         >
-          <p className="text-xs italic" style={{ color: "#F0C030" }}>
+          <div
+            style={{
+              color: "#F0C030",
+              fontSize: 11,
+              fontStyle: "italic",
+              lineHeight: "16px",
+            }}
+          >
             Sa Vidya Ya Vimuktaye — True knowledge is that which liberates
-          </p>
+          </div>
         </div>
       </div>
 
@@ -168,14 +212,32 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex text-sm">
+    <div
+      style={{
+        display: "flex",
+        fontSize: 13,
+        lineHeight: "20px",
+        marginBottom: 4,
+      }}
+    >
       <span
-        className="font-medium shrink-0"
-        style={{ color: "#4A9AD9", width: 80 }}
+        style={{
+          color: "#4A9AD9",
+          fontWeight: 600,
+          width: 82,
+          flexShrink: 0,
+        }}
       >
         {label}:
       </span>
-      <span style={{ color: "#314878" }} className="truncate">
+      <span
+        style={{
+          color: "#314878",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
+      >
         {value}
       </span>
     </div>
