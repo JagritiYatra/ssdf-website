@@ -11,6 +11,7 @@ export interface Registration {
   email: string;
   phone: string;
   photoUrl: string | null;
+  bloodGroup: string | null;
   teamName: string;
   institution: string;
   state: string;
@@ -24,6 +25,7 @@ export interface RegistrationFormData {
   email: string;
   phone: string;
   photoUrl: string;
+  bloodGroup: string;
   teamName: string;
   institution: string;
   state: string;

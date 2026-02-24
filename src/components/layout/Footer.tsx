@@ -1,15 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone, Linkedin } from "lucide-react";
 import {
   SITE_NAME,
   SITE_SHORT_NAME,
-  SITE_MOTTO,
+  SITE_MOTTO_SANSKRIT,
   SITE_MOTTO_MEANING,
   CONTACT,
   NAV_LINKS,
   LEGAL_LINKS,
   PARTNERS,
+  SOCIAL_LINKS,
 } from "@/lib/constants";
 
 export default function Footer() {
@@ -67,7 +68,7 @@ export default function Footer() {
               />
               <div>
                 <h3 className="text-white font-bold text-lg">{SITE_SHORT_NAME}</h3>
-                <p className="text-golden-400 text-sm italic">&ldquo;{SITE_MOTTO}&rdquo;</p>
+                <p className="text-golden-400 text-sm italic">&ldquo;{SITE_MOTTO_SANSKRIT}&rdquo;</p>
               </div>
             </div>
             <p className="text-sm text-navy-300 mb-4 max-w-md leading-relaxed">
@@ -141,6 +142,19 @@ export default function Footer() {
                   <Phone size={14} className="text-golden-400" />
                 </div>
                 <span className="text-navy-300">{CONTACT.phone}</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm">
+                <div className="w-8 h-8 bg-golden-400/10 rounded-lg flex items-center justify-center shrink-0">
+                  <Linkedin size={14} className="text-golden-400" />
+                </div>
+                <a
+                  href={SOCIAL_LINKS.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-navy-300 hover:text-golden-400 transition-colors"
+                >
+                  LinkedIn
+                </a>
               </li>
             </ul>
           </div>

@@ -36,7 +36,7 @@ const colorMap: Record<string, { bg: string; text: string; border: string }> = {
 };
 
 function Countdown() {
-  const target = new Date("2026-06-15T09:00:00+05:30");
+  const target = new Date("2026-03-14T09:00:00+05:30");
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {

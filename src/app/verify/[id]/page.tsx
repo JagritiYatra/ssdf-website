@@ -241,7 +241,7 @@ export default function VerifyPage() {
           {/* Footer */}
           <div className="bg-navy-800 px-6 py-3 text-center">
             <p className="text-xs italic text-golden-400">
-              Sa Vidya Ya Vimuktaye — True knowledge is that which liberates
+              सा विद्या या विमुक्तये — True knowledge is that which liberates
             </p>
           </div>
         </div>

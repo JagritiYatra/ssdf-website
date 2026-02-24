@@ -115,8 +115,8 @@ export default function LaunchPadPage() {
                 operations.
               </p>
               <p className="text-navy-600 leading-relaxed">
-                The launch pad has hosted the CanSat India Student Competition
-                with 150+ teams participating, making it one of the most active
+                The launch pad has hosted the CANSAT India Student Competition
+                with 150+ participants from different parts of India, making it one of the most active
                 student rocketry sites in eastern Uttar Pradesh.
               </p>
             </motion.div>

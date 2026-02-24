@@ -13,6 +13,7 @@ model Registration {
   email       String
   phone       String
   photoUrl    String?
+  bloodGroup  String?
   teamName    String
   institution String
   state       String

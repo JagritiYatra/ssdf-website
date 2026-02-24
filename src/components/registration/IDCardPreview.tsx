@@ -47,8 +47,8 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
       <div
         ref={cardRef}
         style={{
-          width: 600,
-          height: 340,
+          width: 640,
+          minHeight: 400,
           margin: "0 auto",
           backgroundColor: "#ffffff",
           borderRadius: 12,
@@ -57,61 +57,112 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
           boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
         }}
       >
-        {/* Header */}
+        {/* Header with logos */}
         <div
           style={{
             backgroundColor: "#1B2D4F",
-            padding: "10px 24px",
+            padding: "8px 16px",
             display: "flex",
             alignItems: "center",
+            gap: 8,
           }}
         >
+          {/* SSDF Logo */}
           <img
             src="/images/logo-transparent.png"
             alt="SSDF"
-            style={{ width: 36, height: 36, marginRight: 10, borderRadius: 4 }}
+            style={{ width: 34, height: 34, borderRadius: 4 }}
           />
+          {/* Event name & org */}
           <div style={{ flex: 1 }}>
             <div
               style={{
                 color: "#F0C030",
                 fontWeight: 700,
-                fontSize: 14,
-                lineHeight: "18px",
+                fontSize: 11,
+                lineHeight: "14px",
               }}
             >
-              CANSAT INDIA 2026
+              IN-SPACe Model Rocketry / CANSAT India 2026-27
             </div>
-            <div style={{ color: "#9FAFD0", fontSize: 11, lineHeight: "14px" }}>
+            <div style={{ color: "#9FAFD0", fontSize: 10, lineHeight: "13px" }}>
               Shrinarayani Science Development Foundation
             </div>
           </div>
-          <div
-            style={{
-              color: "#F0C030",
-              fontWeight: 700,
-              fontSize: 12,
-              fontFamily: "monospace",
-              textAlign: "right",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {registration.id}
+          {/* Partner logos */}
+          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+            <img
+              src="/images/partners/inspace.png"
+              alt="IN-SPACe"
+              style={{ height: 28, width: "auto" }}
+            />
+            <img
+              src="/images/partners/isro.png"
+              alt="ISRO"
+              style={{ height: 28, width: "auto" }}
+            />
+            <img
+              src="/images/partners/amrit-prayas.png"
+              alt="Amrit Prayas"
+              style={{ height: 28, width: "auto" }}
+            />
+            <img
+              src="/images/partners/bargad.png"
+              alt="Bargad"
+              style={{ height: 28, width: "auto" }}
+            />
+            <img
+              src="/images/partners/shashank-mani.png"
+              alt="Shashank Mani"
+              style={{ height: 28, width: "auto" }}
+            />
           </div>
         </div>
 
         {/* Golden accent line */}
         <div style={{ height: 3, backgroundColor: "#F0C030" }} />
 
+        {/* Registration ID bar */}
+        <div
+          style={{
+            backgroundColor: "#F5F7FB",
+            padding: "5px 16px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <span
+            style={{
+              color: "#1B2D4F",
+              fontWeight: 700,
+              fontSize: 11,
+              fontFamily: "monospace",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {registration.id}
+          </span>
+          <span
+            style={{
+              color: "#4A9AD9",
+              fontSize: 10,
+              fontWeight: 600,
+            }}
+          >
+            {categoryLabel}
+          </span>
+        </div>
+
         {/* Body */}
-        <div style={{ padding: "14px 24px", display: "flex" }}>
+        <div style={{ padding: "12px 16px", display: "flex" }}>
           {/* Photo + QR */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              marginRight: 20,
+              marginRight: 16,
             }}
           >
             {registration.photoUrl ? (
@@ -120,8 +171,8 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
                 alt={registration.fullName}
                 crossOrigin="anonymous"
                 style={{
-                  width: 88,
-                  height: 88,
+                  width: 84,
+                  height: 84,
                   borderRadius: "50%",
                   objectFit: "cover",
                   border: "3px solid #1B2D4F",
@@ -130,8 +181,8 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
             ) : (
               <div
                 style={{
-                  width: 88,
-                  height: 88,
+                  width: 84,
+                  height: 84,
                   borderRadius: "50%",
                   backgroundColor: "#E8EDF5",
                   border: "3px solid #1B2D4F",
@@ -140,16 +191,16 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
                   justifyContent: "center",
                   color: "#1B2D4F",
                   fontWeight: 700,
-                  fontSize: 28,
+                  fontSize: 26,
                 }}
               >
                 {registration.fullName.charAt(0)}
               </div>
             )}
-            <div style={{ marginTop: 10 }}>
+            <div style={{ marginTop: 8 }}>
               <QRCodeSVG
                 value={verifyUrl}
-                size={80}
+                size={76}
                 fgColor="#1B2D4F"
                 bgColor="#ffffff"
               />
@@ -162,17 +213,19 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
               style={{
                 color: "#1B2D4F",
                 fontWeight: 700,
-                fontSize: 19,
-                lineHeight: "24px",
-                marginBottom: 10,
+                fontSize: 18,
+                lineHeight: "22px",
+                marginBottom: 8,
               }}
             >
               {registration.fullName}
             </div>
             <DetailRow label="Team" value={registration.teamName} />
             <DetailRow label="Institution" value={registration.institution} />
-            <DetailRow label="Category" value={categoryLabel} />
             <DetailRow label="State" value={registration.state} />
+            {registration.bloodGroup && (
+              <DetailRow label="Blood Group" value={registration.bloodGroup} />
+            )}
             <DetailRow
               label="Members"
               value={registration.teamMembers.map((m) => m.name).join(", ")}
@@ -180,23 +233,39 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer — contact + tagline */}
         <div
           style={{
             backgroundColor: "#1B2D4F",
-            padding: "8px 24px",
-            textAlign: "center",
+            padding: "6px 16px",
           }}
         >
           <div
             style={{
-              color: "#F0C030",
-              fontSize: 11,
-              fontStyle: "italic",
-              lineHeight: "16px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            Sa Vidya Ya Vimuktaye — True knowledge is that which liberates
+            <div
+              style={{
+                color: "#9FAFD0",
+                fontSize: 9,
+                lineHeight: "14px",
+              }}
+            >
+              887-870-5000 | www.ssdf.org.in | director@ssdf.org.in
+            </div>
+            <div
+              style={{
+                color: "#F0C030",
+                fontSize: 10,
+                fontStyle: "italic",
+                lineHeight: "14px",
+              }}
+            >
+              सा विद्या या विमुक्तये
+            </div>
           </div>
         </div>
       </div>
@@ -218,9 +287,9 @@ function DetailRow({ label, value }: { label: string; value: string }) {
     <div
       style={{
         display: "flex",
-        fontSize: 13,
-        lineHeight: "20px",
-        marginBottom: 4,
+        fontSize: 12,
+        lineHeight: "18px",
+        marginBottom: 3,
       }}
     >
       <span

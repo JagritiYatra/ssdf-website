@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
         email: data.email,
         phone: data.phone,
         photoUrl: data.photoUrl || null,
+        bloodGroup: data.bloodGroup || null,
         teamName: data.teamName,
         institution: data.institution,
         state: data.state,

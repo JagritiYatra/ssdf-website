@@ -53,7 +53,7 @@ export default function Navbar() {
                 {SITE_SHORT_NAME}
               </span>
               <span className="text-golden-400 text-[10px] md:text-xs font-medium leading-tight hidden sm:block">
-                Sa Vidya Ya Vimuktaye
+                सा विद्या या विमुक्तये
               </span>
             </div>
           </Link>

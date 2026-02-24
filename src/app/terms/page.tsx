@@ -8,7 +8,7 @@ import { SITE_NAME, SITE_URL, CONTACT } from "@/lib/constants";
 const sections = [
   {
     title: "1. About the Organization",
-    content: `${`Shrinarayani Science Development Foundation`} is a Section 8 Company limited by guarantee under the Companies Act, 2013, registered at ${`C/O Ashutosh Kumar, Jagriti Sewa Sansthan, Raghav Nagar, Deoria New Colony, Deoria Sadar, Deoria-274001, Uttar Pradesh`}. SSDF is established with the objective of promoting science education, space science, model rocketry, and allied scientific activities among youth, particularly in rural and underserved areas.`,
+    content: `Shrinarayani Science Development Foundation is a Section 8 Company limited by guarantee under the Companies Act, 2013, registered at 10/236 Raghav Nagar, Civil Lines, Near Income Tax Office, Deoria, U.P. 274001. SSDF is established with the objective of promoting science education, space science, model rocketry, and allied scientific activities among youth, particularly in rural and underserved areas.`,
   },
   {
     title: "2. Objectives & Nature of Services",
@@ -19,7 +19,7 @@ const sections = [
       "Providing scholarships, stipends, and financial support to meritorious students from rural and economically weaker backgrounds",
       "Operating and maintaining student rocket launch facilities for educational and research purposes",
       "Establishing and running computer education centers and science laboratories in underserved areas",
-      "Facilitating collaborations with national space agencies (ISRO, IN-SPACe), scientific bodies (Astronomical Society of India), and educational institutions",
+      "Facilitating collaborations with national space agencies (ISRO, IN-SPACe) and educational institutions",
     ],
   },
   {

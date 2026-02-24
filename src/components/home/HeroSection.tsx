@@ -20,7 +20,7 @@ import Button from "@/components/ui/Button";
 const slides = [
   {
     id: 0,
-    badge: "CanSat India 2026 — Registrations Open",
+    badge: "CANSAT India 2026-27 — Registrations Open",
     badgeIcon: Sparkles,
     title: (
       <>
@@ -33,14 +33,14 @@ const slides = [
     ),
     subtitle:
       "Promoting science education, space science & model rocketry for youth in Deoria, Uttar Pradesh and beyond.",
-    cta: { label: "Register for CanSat 2026", href: "/register" },
+    cta: { label: "Register for CANSAT 2026-27", href: "/register" },
     secondaryCta: { label: "Learn More", href: "/about" },
     showRocket: true,
     showPartners: true,
   },
   {
     id: 1,
-    badge: "Supported by ISRO, IN-SPACe & ASI",
+    badge: "Supported by ISRO & IN-SPACe",
     badgeIcon: Landmark,
     title: (
       <>
@@ -51,7 +51,7 @@ const slides = [
       </>
     ),
     subtitle:
-      "\"Space technology should benefit health, education & agriculture\" — MP Shashank Mani Tripathi. ISRO, IN-SPACe & Astronomical Society of India jointly inspect and support our launch facility.",
+      "\"Space technology should benefit health, education & agriculture\" — MP Shashank Mani Tripathi. ISRO & IN-SPACe jointly inspect and support our launch facility.",
     cta: { label: "Explore Programs", href: "/programs" },
     secondaryCta: { label: "About SSDF", href: "/about" },
     showRocket: false,
@@ -167,13 +167,6 @@ export default function HeroSection() {
                       <Image
                         src="/images/partners/inspace.png"
                         alt="IN-SPACe"
-                        width={80}
-                        height={30}
-                        className="h-5 sm:h-6 w-auto brightness-0 invert opacity-50"
-                      />
-                      <Image
-                        src="/images/partners/jagriti.png"
-                        alt="Jagriti"
                         width={80}
                         height={30}
                         className="h-5 sm:h-6 w-auto brightness-0 invert opacity-50"

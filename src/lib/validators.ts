@@ -7,6 +7,7 @@ export const step1Schema = z.object({
     .string()
     .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian phone number"),
   photoUrl: z.string().min(1, "Photo is required"),
+  bloodGroup: z.string().optional().default(""),
 });
 
 export const teamMemberSchema = z.object({

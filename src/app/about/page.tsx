@@ -51,7 +51,7 @@ export default function AboutPage() {
       <PageHeader
         title="About"
         highlight="SSDF"
-        subtitle="Sa Vidya Ya Vimuktaye — True knowledge is that which liberates from ignorance and limitations."
+        subtitle="सा विद्या या विमुक्तये — True knowledge is that which liberates from ignorance and limitations."
         icon={<Info className="text-golden-400" size={24} />}
       />
 

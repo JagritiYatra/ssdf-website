@@ -16,7 +16,7 @@ export interface Program {
 export const programs: Program[] = [
   {
     slug: "cansat-india",
-    title: "CanSat India 2026",
+    title: "IN-SPACe Model Rocketry / CANSAT India 2026-27",
     shortDesc:
       "India's premier student satellite competition. Design, build, and launch miniature satellites with real telemetry systems.",
     icon: "Rocket",
@@ -24,7 +24,7 @@ export const programs: Program[] = [
     featured: true,
     details: {
       description:
-        "CanSat India is a national-level student satellite competition organized by SSDF in collaboration with IN-SPACe. Teams design and build a miniature satellite (CanSat) that is launched to an altitude of several hundred meters and must perform scientific missions during descent. The 2026 edition features 150+ teams competing from across India.",
+        "CANSAT India is a national-level student satellite competition organized by SSDF in collaboration with IN-SPACe. Teams design and build a miniature satellite (CanSat) that is launched to an altitude of several hundred meters and must perform scientific missions during descent. The 2026-27 edition features 150+ participants competing from different parts of India.",
       highlights: [
         "Design and build a functional CanSat payload",
         "Real rocket launch from SSDF Launch Pad on Gandak River banks",
@@ -34,7 +34,7 @@ export const programs: Program[] = [
         "National-level certificate for all participants",
       ],
       eligibility: "Open to school students (Class 9-12) and college students (UG/PG) across India",
-      timeline: "Registration: Jan-Mar 2026 | Design Review: Apr 2026 | Launch: Jun 2026",
+      timeline: "Registration: Jan-Mar 2026 | Design Review: 13 Mar 2026 | Launch: 14 Mar 2026",
     },
   },
   {

@@ -42,6 +42,7 @@ export default function RegisterPage() {
     email: "",
     phone: "",
     photoUrl: "",
+    bloodGroup: "",
     teamName: "",
     institution: "",
     state: "",
@@ -123,7 +124,7 @@ export default function RegisterPage() {
     <>
       <PageHeader
         title="Register for"
-        highlight="CanSat India 2026"
+        highlight="CANSAT India 2026-27"
         subtitle="Complete the form below to register your team for India's premier student satellite competition"
         icon={<Rocket className="text-golden-400" size={24} />}
       />
@@ -209,6 +210,23 @@ export default function RegisterPage() {
                     onChange={(e) => updateField("phone", e.target.value)}
                     error={errors.phone}
                   />
+                  <Select
+                    id="bloodGroup"
+                    label="Blood Group (Optional)"
+                    value={form.bloodGroup}
+                    onChange={(e) => updateField("bloodGroup", e.target.value)}
+                    options={[
+                      { value: "", label: "Select blood group" },
+                      { value: "A+", label: "A+" },
+                      { value: "A-", label: "A-" },
+                      { value: "B+", label: "B+" },
+                      { value: "B-", label: "B-" },
+                      { value: "AB+", label: "AB+" },
+                      { value: "AB-", label: "AB-" },
+                      { value: "O+", label: "O+" },
+                      { value: "O-", label: "O-" },
+                    ]}
+                  />
                   <PhotoUpload
                     value={form.photoUrl}
                     onChange={(v) => updateField("photoUrl", v)}
@@ -283,6 +301,9 @@ export default function RegisterPage() {
                       <ReviewField label="Name" value={form.fullName} />
                       <ReviewField label="Email" value={form.email} />
                       <ReviewField label="Phone" value={form.phone} />
+                      {form.bloodGroup && (
+                        <ReviewField label="Blood Group" value={form.bloodGroup} />
+                      )}
                       {form.photoUrl && (
                         <div className="flex items-center gap-2">
                           <span className="text-sm text-navy-500 w-24">Photo:</span>
