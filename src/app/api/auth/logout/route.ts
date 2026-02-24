@@ -1,7 +1,7 @@
-import { destroyAdminSession } from "@/lib/auth";
+import { destroyUserSession } from "@/lib/auth";
 import { jsonResponse } from "@/lib/api";
 
 export async function POST() {
-  await destroyAdminSession();
+  await destroyUserSession();
   return jsonResponse({ success: true });
 }

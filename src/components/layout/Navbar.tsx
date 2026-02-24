@@ -4,15 +4,17 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ChevronRight } from "lucide-react";
+import { Menu, X, ChevronRight, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS, SITE_SHORT_NAME } from "@/lib/constants";
 import Button from "@/components/ui/Button";
+import { useUserAuth } from "@/hooks/useUserAuth";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { user, loading: authLoading } = useUserAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -77,6 +79,15 @@ export default function Navbar() {
                 Register Now <ChevronRight size={14} className="ml-1" />
               </Button>
             </Link>
+            {!authLoading && (
+              <Link
+                href={user ? "/dashboard" : "/login"}
+                className="ml-2 flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg text-navy-200 hover:text-white hover:bg-white/5 transition-all"
+              >
+                <UserCircle size={18} />
+                {user ? "Dashboard" : "Login"}
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -113,6 +124,18 @@ export default function Navbar() {
               <ChevronRight size={16} className="opacity-40" />
             </Link>
           ))}
+          {!authLoading && (
+            <Link
+              href={user ? "/dashboard" : "/login"}
+              className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-navy-200 hover:text-white hover:bg-navy-800/60 transition-all"
+            >
+              <span className="flex items-center gap-2">
+                <UserCircle size={16} />
+                {user ? "Dashboard" : "Login"}
+              </span>
+              <ChevronRight size={16} className="opacity-40" />
+            </Link>
+          )}
         </div>
       </div>
     </nav>

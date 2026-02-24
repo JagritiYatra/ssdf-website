@@ -7,12 +7,12 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
-  Lock,
+  Mail,
   LogOut,
-  Eye,
   Menu,
   X,
   ShieldCheck,
+  ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SITE_SHORT_NAME } from "@/lib/constants";
@@ -29,15 +29,15 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState("");
   const [checking, setChecking] = useState(true);
   const [loginLoading, setLoginLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    // Check if we have a valid session by hitting an authed endpoint
     fetch("/api/admin/stats", { credentials: "include" })
       .then((res) => {
         if (res.ok) setAuthenticated(true);
@@ -49,7 +49,7 @@ export default function AdminLayout({
     setSidebarOpen(false);
   }, [pathname]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRequestOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginLoading(true);
     setError("");
@@ -58,17 +58,43 @@ export default function AdminLayout({
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-        credentials: "include",
+        body: JSON.stringify({ email }),
       });
 
+      const data = await res.json();
       if (res.ok) {
-        setAuthenticated(true);
+        setOtpSent(true);
       } else {
-        setError("Incorrect password. Please try again.");
+        setError(data.error || "Failed to send OTP");
       }
     } catch {
       setError("Login failed. Please try again.");
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/admin/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code: otpCode }),
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setAuthenticated(true);
+      } else {
+        setError(data.error || "Invalid OTP");
+      }
+    } catch {
+      setError("Verification failed. Please try again.");
     } finally {
       setLoginLoading(false);
     }
@@ -80,7 +106,9 @@ export default function AdminLayout({
       credentials: "include",
     });
     setAuthenticated(false);
-    setPassword("");
+    setEmail("");
+    setOtpCode("");
+    setOtpSent(false);
   };
 
   // Loading state
@@ -96,7 +124,6 @@ export default function AdminLayout({
   if (!authenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 relative overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-golden-400/5 rounded-full blur-3xl" />
           <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-river-400/5 rounded-full blur-3xl" />
@@ -117,59 +144,114 @@ export default function AdminLayout({
 
             {/* Form */}
             <div className="p-8">
-              <form onSubmit={handleLogin} className="space-y-5">
-                <div>
-                  <label
-                    htmlFor="admin-password"
-                    className="block text-sm font-medium text-navy-700 mb-2"
+              {!otpSent ? (
+                <form onSubmit={handleRequestOtp} className="space-y-5">
+                  <div>
+                    <label
+                      htmlFor="admin-email"
+                      className="block text-sm font-medium text-navy-700 mb-2"
+                    >
+                      Admin Email
+                    </label>
+                    <div className="relative">
+                      <Mail
+                        size={18}
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400"
+                      />
+                      <input
+                        id="admin-email"
+                        type="email"
+                        placeholder="Enter admin email"
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setError("");
+                        }}
+                        className={cn(
+                          "w-full pl-11 pr-4 py-3 rounded-xl border bg-navy-50 text-navy-800 placeholder-navy-400 transition-all focus:outline-none focus:ring-2 focus:bg-white",
+                          error
+                            ? "border-red-300 focus:ring-red-400"
+                            : "border-navy-200 focus:ring-golden-400 focus:border-golden-400"
+                        )}
+                        autoFocus
+                        required
+                      />
+                    </div>
+                    {error && (
+                      <p className="mt-2 text-sm text-red-500 flex items-center gap-1.5">
+                        <span className="w-1 h-1 bg-red-500 rounded-full" />
+                        {error}
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loginLoading}
+                    className="w-full bg-golden-400 text-navy-900 font-semibold py-3 rounded-xl hover:bg-golden-500 transition-colors shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50"
                   >
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock
-                      size={18}
-                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400"
-                    />
+                    {loginLoading ? "Sending OTP..." : "Send OTP"}
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleVerifyOtp} className="space-y-5">
+                  <p className="text-sm text-navy-500 text-center mb-2">
+                    We sent a 6-digit code to{" "}
+                    <span className="font-medium text-navy-700">{email}</span>
+                  </p>
+                  <div>
+                    <label
+                      htmlFor="admin-otp"
+                      className="block text-sm font-medium text-navy-700 mb-2"
+                    >
+                      Enter OTP
+                    </label>
                     <input
-                      id="admin-password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter admin password"
-                      value={password}
+                      id="admin-otp"
+                      type="text"
+                      placeholder="000000"
+                      value={otpCode}
                       onChange={(e) => {
-                        setPassword(e.target.value);
+                        const v = e.target.value.replace(/\D/g, "").slice(0, 6);
+                        setOtpCode(v);
                         setError("");
                       }}
                       className={cn(
-                        "w-full pl-11 pr-12 py-3 rounded-xl border bg-navy-50 text-navy-800 placeholder-navy-400 transition-all focus:outline-none focus:ring-2 focus:bg-white",
+                        "w-full px-4 py-3 rounded-xl border bg-navy-50 text-navy-800 text-center text-2xl font-mono tracking-[0.5em] placeholder-navy-300 transition-all focus:outline-none focus:ring-2 focus:bg-white",
                         error
                           ? "border-red-300 focus:ring-red-400"
                           : "border-navy-200 focus:ring-golden-400 focus:border-golden-400"
                       )}
+                      maxLength={6}
                       autoFocus
+                      required
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-navy-400 hover:text-navy-600 cursor-pointer"
-                    >
-                      <Eye size={18} />
-                    </button>
+                    {error && (
+                      <p className="mt-2 text-sm text-red-500 flex items-center gap-1.5">
+                        <span className="w-1 h-1 bg-red-500 rounded-full" />
+                        {error}
+                      </p>
+                    )}
                   </div>
-                  {error && (
-                    <p className="mt-2 text-sm text-red-500 flex items-center gap-1.5">
-                      <span className="w-1 h-1 bg-red-500 rounded-full" />
-                      {error}
-                    </p>
-                  )}
-                </div>
-                <button
-                  type="submit"
-                  disabled={loginLoading}
-                  className="w-full bg-golden-400 text-navy-900 font-semibold py-3 rounded-xl hover:bg-golden-500 transition-colors shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50"
-                >
-                  {loginLoading ? "Signing in..." : "Sign In"}
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    disabled={loginLoading || otpCode.length !== 6}
+                    className="w-full bg-golden-400 text-navy-900 font-semibold py-3 rounded-xl hover:bg-golden-500 transition-colors shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50"
+                  >
+                    {loginLoading ? "Verifying..." : "Verify & Sign In"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOtpSent(false);
+                      setOtpCode("");
+                      setError("");
+                    }}
+                    className="w-full text-sm text-navy-400 hover:text-navy-600 py-2 cursor-pointer flex items-center justify-center gap-1"
+                  >
+                    <ArrowLeft size={14} /> Change email
+                  </button>
+                </form>
+              )}
 
               <div className="mt-6 pt-5 border-t border-navy-100 text-center">
                 <Link
@@ -192,7 +274,6 @@ export default function AdminLayout({
       {/* Top bar */}
       <header className="fixed top-0 left-0 right-0 z-40 bg-navy-800 h-16 flex items-center px-4 lg:px-6 shadow-lg">
         <div className="flex items-center gap-3 flex-1">
-          {/* Mobile menu toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="lg:hidden text-navy-300 hover:text-white p-2 rounded-lg hover:bg-navy-700 transition-colors cursor-pointer"
@@ -200,7 +281,6 @@ export default function AdminLayout({
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
-          {/* Logo */}
           <Link href="/admin" className="flex items-center gap-2.5">
             <div className="bg-white rounded-lg p-0.5">
               <Image
@@ -222,7 +302,6 @@ export default function AdminLayout({
           </Link>
         </div>
 
-        {/* Right side */}
         <div className="flex items-center gap-3">
           <Link
             href="/"

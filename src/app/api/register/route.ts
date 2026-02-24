@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { registrationSchema } from "@/lib/validators";
 import { jsonResponse, errorResponse } from "@/lib/api";
+import { sendRegistrationConfirmation } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,6 +37,14 @@ export async function POST(request: NextRequest) {
         teamMembers: data.teamMembers,
       },
     });
+
+    // Fire-and-forget confirmation email
+    sendRegistrationConfirmation(data.email, {
+      id: registration.id,
+      fullName: data.fullName,
+      teamName: data.teamName,
+      category: data.category,
+    }).catch((err) => console.error("Confirmation email failed:", err));
 
     return jsonResponse(registration, 201);
   } catch (error) {

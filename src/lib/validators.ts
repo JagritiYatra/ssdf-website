@@ -30,3 +30,35 @@ export const registrationSchema = step1Schema.merge(step2Schema);
 export type Step1Data = z.infer<typeof step1Schema>;
 export type Step2Data = z.infer<typeof step2Schema>;
 export type RegistrationData = z.infer<typeof registrationSchema>;
+
+// --- Auth Schemas ---
+
+export const signupSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+export const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export const otpRequestSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+export const otpVerifySchema = z.object({
+  email: z.string().email("Invalid email address"),
+  code: z.string().length(6, "OTP must be 6 digits"),
+});
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  code: z.string().length(6, "OTP must be 6 digits"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+});

@@ -5,11 +5,15 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import ScrollToTop from "./ScrollToTop";
 
+const BARE_ROUTES = ["/admin", "/login", "/signup", "/forgot-password", "/dashboard"];
+
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
+  const isBare = BARE_ROUTES.some(
+    (r) => pathname === r || pathname.startsWith(r + "/")
+  );
 
-  if (isAdmin) {
+  if (isBare) {
     return <>{children}</>;
   }
 

@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
+import { prisma } from "@/lib/prisma";
 import { otpRequestSchema } from "@/lib/validators";
-import { ADMIN_EMAILS } from "@/lib/auth";
 import { generateAndSendOtp } from "@/lib/otp";
 import { jsonResponse, errorResponse } from "@/lib/api";
 
@@ -14,18 +14,19 @@ export async function POST(request: NextRequest) {
 
     const { email } = result.data;
 
-    if (!ADMIN_EMAILS.includes(email)) {
-      return errorResponse("This email is not authorized for admin access", 403);
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return errorResponse("No account found with this email", 404);
     }
 
-    const otpResult = await generateAndSendOtp(email, "admin-login");
+    const otpResult = await generateAndSendOtp(email, "forgot-password");
     if (!otpResult.success) {
       return errorResponse(otpResult.error!, 429);
     }
 
     return jsonResponse({ success: true, message: "OTP sent to your email" });
   } catch (error) {
-    console.error("Admin login error:", error);
-    return errorResponse("Login failed", 500);
+    console.error("Forgot password error:", error);
+    return errorResponse("Failed to send OTP", 500);
   }
 }

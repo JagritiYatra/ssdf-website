@@ -23,3 +23,26 @@ model Registration {
   @@index([category])
   @@index([createdAt])
 }
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Otp {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  purpose   String   // "user-login" | "admin-login" | "forgot-password"
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email, purpose])
+}
