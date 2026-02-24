@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
+  ClipboardCheck,
   Mail,
   LogOut,
   Menu,
@@ -20,6 +21,7 @@ import { SITE_SHORT_NAME } from "@/lib/constants";
 const sidebarLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/registrations", label: "Registrations", icon: Users },
+  { href: "/admin/attendance", label: "Attendance", icon: ClipboardCheck },
 ];
 
 export default function AdminLayout({

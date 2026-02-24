@@ -41,6 +41,8 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
 
   return (
     <div>
+      {/* Scrollable wrapper for mobile */}
+      <div className="overflow-x-auto pb-4 -mx-4 px-4">
       {/* ID Card — all inline styles for html2canvas compatibility */}
       <div
         ref={cardRef}
@@ -197,6 +199,7 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
             Sa Vidya Ya Vimuktaye — True knowledge is that which liberates
           </div>
         </div>
+      </div>
       </div>
 
       {/* Download Button */}

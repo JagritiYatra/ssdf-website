@@ -46,3 +46,14 @@ model Otp {
 
   @@index([email, purpose])
 }
+
+model Attendance {
+  id             String   @id @default(cuid())
+  registrationId String
+  date           String   // YYYY-MM-DD
+  markedAt       DateTime @default(now())
+
+  @@unique([registrationId, date])
+  @@index([date])
+  @@index([registrationId])
+}
