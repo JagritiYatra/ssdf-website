@@ -9,6 +9,8 @@ export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "all";
+  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20", 10)));
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {};
@@ -26,10 +28,20 @@ export async function GET(request: NextRequest) {
     ];
   }
 
-  const registrations = await prisma.registration.findMany({
-    where,
-    orderBy: { createdAt: "desc" },
-  });
+  const [registrations, total] = await Promise.all([
+    prisma.registration.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.registration.count({ where }),
+  ]);
 
-  return jsonResponse(registrations);
+  return jsonResponse({
+    data: registrations,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  });
 }

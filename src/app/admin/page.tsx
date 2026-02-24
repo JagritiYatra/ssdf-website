@@ -10,7 +10,6 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
-import { useRegistrations } from "@/hooks/useRegistrations";
 
 interface Stats {
   total: number;
@@ -19,15 +18,27 @@ interface Stats {
   professional: number;
 }
 
+interface RecentReg {
+  id: string;
+  fullName: string;
+  photoUrl: string | null;
+  teamName: string;
+  category: string;
+  createdAt: string;
+}
+
 export default function AdminDashboard() {
-  const { registrations, loading: regsLoading } = useRegistrations();
   const [stats, setStats] = useState<Stats>({ total: 0, school: 0, college: 0, professional: 0 });
+  const [recent, setRecent] = useState<RecentReg[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/stats", { credentials: "include" })
+    fetch("/api/admin/dashboard", { credentials: "include" })
       .then((res) => res.json())
-      .then((data) => setStats(data))
+      .then((data) => {
+        setStats(data.stats);
+        setRecent(data.recent);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -62,7 +73,7 @@ export default function AdminDashboard() {
     },
   ];
 
-  if (loading || regsLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="w-8 h-8 border-4 border-navy-200 border-t-golden-400 rounded-full animate-spin" />
@@ -124,7 +135,7 @@ export default function AdminDashboard() {
             Last 5
           </span>
         </div>
-        {registrations.length === 0 ? (
+        {recent.length === 0 ? (
           <div className="text-center py-16">
             <Users size={40} className="mx-auto text-navy-200 mb-3" />
             <p className="text-navy-400 text-sm">
@@ -154,59 +165,57 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-navy-50">
-                {registrations
-                  .slice(0, 5)
-                  .map((reg) => (
-                    <tr
-                      key={reg.id}
-                      className="hover:bg-navy-50/50 transition-colors"
-                    >
-                      <td className="py-3 px-4 font-mono text-xs text-river-600">
-                        {reg.id}
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2.5">
-                          {reg.photoUrl ? (
-                            <img
-                              src={reg.photoUrl}
-                              alt=""
-                              className="w-7 h-7 rounded-full object-cover border border-navy-100"
-                            />
-                          ) : (
-                            <div className="w-7 h-7 rounded-full bg-navy-100 flex items-center justify-center text-navy-400 text-[10px] font-bold">
-                              {reg.fullName
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .slice(0, 2)}
-                            </div>
-                          )}
-                          <span className="font-medium text-navy-800">
-                            {reg.fullName}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4 text-navy-600">
-                        {reg.teamName}
-                      </td>
-                      <td className="py-3 px-4">
-                        <span
-                          className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
-                            reg.category === "school"
-                              ? "bg-river-50 text-river-700"
-                              : reg.category === "college"
-                              ? "bg-forest-50 text-forest-700"
-                              : "bg-golden-50 text-golden-700"
-                          }`}
-                        >
-                          {reg.category}
+                {recent.map((reg) => (
+                  <tr
+                    key={reg.id}
+                    className="hover:bg-navy-50/50 transition-colors"
+                  >
+                    <td className="py-3 px-4 font-mono text-xs text-river-600">
+                      {reg.id}
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2.5">
+                        {reg.photoUrl ? (
+                          <img
+                            src={reg.photoUrl}
+                            alt=""
+                            className="w-7 h-7 rounded-full object-cover border border-navy-100"
+                          />
+                        ) : (
+                          <div className="w-7 h-7 rounded-full bg-navy-100 flex items-center justify-center text-navy-400 text-[10px] font-bold">
+                            {reg.fullName
+                              .split(" ")
+                              .map((n: string) => n[0])
+                              .join("")
+                              .slice(0, 2)}
+                          </div>
+                        )}
+                        <span className="font-medium text-navy-800">
+                          {reg.fullName}
                         </span>
-                      </td>
-                      <td className="py-3 px-4 text-navy-400 text-xs">
-                        {new Date(reg.createdAt).toLocaleDateString()}
-                      </td>
-                    </tr>
-                  ))}
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-navy-600">
+                      {reg.teamName}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                          reg.category === "school"
+                            ? "bg-river-50 text-river-700"
+                            : reg.category === "college"
+                            ? "bg-forest-50 text-forest-700"
+                            : "bg-golden-50 text-golden-700"
+                        }`}
+                      >
+                        {reg.category}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-navy-400 text-xs">
+                      {new Date(reg.createdAt).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

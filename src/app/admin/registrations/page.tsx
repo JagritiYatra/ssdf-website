@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Search,
   Download,
   X,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Users,
   Mail,
   Phone,
@@ -15,30 +17,74 @@ import {
   UserCircle,
 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
-import { useRegistrations } from "@/hooks/useRegistrations";
 import { Registration, Category } from "@/types/registration";
 
+const PAGE_SIZE = 20;
+
 export default function RegistrationsPage() {
-  const { registrations, loading } = useRegistrations();
+  const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<Category | "all">(
-    "all"
-  );
+  const [categoryFilter, setCategoryFilter] = useState<Category | "all">("all");
   const [selected, setSelected] = useState<Registration | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const filtered = registrations.filter((r) => {
-    const matchesSearch =
-      search === "" ||
-      r.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      r.teamName.toLowerCase().includes(search.toLowerCase()) ||
-      r.id.toLowerCase().includes(search.toLowerCase()) ||
-      r.email.toLowerCase().includes(search.toLowerCase());
+  const fetchRegistrations = useCallback(
+    async (p: number, s: string, cat: string) => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({
+          page: String(p),
+          limit: String(PAGE_SIZE),
+        });
+        if (s) params.set("search", s);
+        if (cat !== "all") params.set("category", cat);
 
-    const matchesCategory =
-      categoryFilter === "all" || r.category === categoryFilter;
+        const res = await fetch(`/api/registrations?${params}`, {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Failed to fetch");
+        const data = await res.json();
+        setRegistrations(data.data);
+        setTotal(data.total);
+        setTotalPages(data.totalPages);
+        setPage(data.page);
+      } catch {
+        setRegistrations([]);
+        setTotal(0);
+        setTotalPages(1);
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
-    return matchesSearch && matchesCategory;
-  });
+  // Initial load
+  useEffect(() => {
+    fetchRegistrations(1, "", "all");
+  }, [fetchRegistrations]);
+
+  // Debounced search
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchRegistrations(1, value, categoryFilter);
+    }, 300);
+  };
+
+  const handleCategoryChange = (cat: Category | "all") => {
+    setCategoryFilter(cat);
+    fetchRegistrations(1, search, cat);
+  };
+
+  const handlePageChange = (p: number) => {
+    fetchRegistrations(p, search, categoryFilter);
+  };
 
   const handleExport = async () => {
     try {
@@ -56,14 +102,6 @@ export default function RegistrationsPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-navy-200 border-t-golden-400 rounded-full animate-spin" />
-      </div>
-    );
-  }
-
   return (
     <div>
       {/* Page header */}
@@ -76,7 +114,7 @@ export default function RegistrationsPage() {
         </div>
         <button
           onClick={handleExport}
-          disabled={registrations.length === 0}
+          disabled={total === 0}
           className="inline-flex items-center gap-2 bg-navy-800 text-white font-semibold text-sm px-4 py-2.5 rounded-lg hover:bg-navy-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           <Download size={16} /> Export CSV
@@ -95,12 +133,15 @@ export default function RegistrationsPage() {
               type="text"
               placeholder="Search by name, team, ID, or email..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-navy-200 bg-navy-50 text-sm text-navy-800 placeholder-navy-400 focus:outline-none focus:ring-2 focus:ring-golden-400 focus:border-golden-400 focus:bg-white transition-all"
             />
             {search && (
               <button
-                onClick={() => setSearch("")}
+                onClick={() => {
+                  setSearch("");
+                  fetchRegistrations(1, "", categoryFilter);
+                }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-400 hover:text-navy-600 cursor-pointer"
               >
                 <X size={16} />
@@ -111,7 +152,7 @@ export default function RegistrationsPage() {
             <select
               value={categoryFilter}
               onChange={(e) =>
-                setCategoryFilter(e.target.value as Category | "all")
+                handleCategoryChange(e.target.value as Category | "all")
               }
               className="appearance-none pl-4 pr-10 py-2.5 rounded-lg border border-navy-200 bg-navy-50 text-sm text-navy-800 focus:outline-none focus:ring-2 focus:ring-golden-400 focus:border-golden-400 focus:bg-white transition-all cursor-pointer"
             >
@@ -128,18 +169,30 @@ export default function RegistrationsPage() {
         </div>
         <p className="text-[11px] text-navy-400 mt-2.5">
           Showing{" "}
-          <span className="font-semibold text-navy-600">{filtered.length}</span>{" "}
-          of {registrations.length} registrations
+          <span className="font-semibold text-navy-600">
+            {registrations.length}
+          </span>{" "}
+          of {total} registrations
+          {totalPages > 1 && (
+            <span>
+              {" "}
+              &middot; Page {page} of {totalPages}
+            </span>
+          )}
         </p>
       </div>
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-navy-100 shadow-sm overflow-hidden">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-4 border-navy-200 border-t-golden-400 rounded-full animate-spin" />
+          </div>
+        ) : registrations.length === 0 ? (
           <div className="text-center py-16">
             <Users size={40} className="mx-auto text-navy-200 mb-3" />
             <p className="text-navy-400 text-sm">
-              {registrations.length === 0
+              {total === 0 && !search
                 ? "No registrations yet."
                 : "No results match your search."}
             </p>
@@ -173,7 +226,7 @@ export default function RegistrationsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-navy-50">
-                {filtered.map((reg) => (
+                {registrations.map((reg) => (
                   <tr
                     key={reg.id}
                     onClick={() => setSelected(reg)}
@@ -236,6 +289,56 @@ export default function RegistrationsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && !loading && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-navy-100 bg-navy-50/30">
+            <p className="text-xs text-navy-500">
+              Page {page} of {totalPages} ({total} total)
+            </p>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page <= 1}
+                className="p-2 rounded-lg text-navy-500 hover:bg-navy-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let p: number;
+                if (totalPages <= 5) {
+                  p = i + 1;
+                } else if (page <= 3) {
+                  p = i + 1;
+                } else if (page >= totalPages - 2) {
+                  p = totalPages - 4 + i;
+                } else {
+                  p = page - 2 + i;
+                }
+                return (
+                  <button
+                    key={p}
+                    onClick={() => handlePageChange(p)}
+                    className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                      p === page
+                        ? "bg-golden-400 text-navy-900"
+                        : "text-navy-500 hover:bg-navy-100"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page >= totalPages}
+                className="p-2 rounded-lg text-navy-500 hover:bg-navy-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
         )}
       </div>

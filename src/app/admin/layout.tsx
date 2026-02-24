@@ -40,7 +40,7 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    fetch("/api/admin/stats", { credentials: "include" })
+    fetch("/api/admin/session", { credentials: "include" })
       .then((res) => {
         if (res.ok) setAuthenticated(true);
       })
