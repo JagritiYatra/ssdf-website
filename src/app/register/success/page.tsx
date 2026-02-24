@@ -7,20 +7,37 @@ import { motion } from "framer-motion";
 import { CheckCircle, Home } from "lucide-react";
 import Button from "@/components/ui/Button";
 import IDCardPreview from "@/components/registration/IDCardPreview";
-import { getRegistrationById } from "@/lib/registration-store";
 import { Registration } from "@/types/registration";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [registration, setRegistration] = useState<Registration | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (id) {
-      const reg = getRegistrationById(id);
-      if (reg) setRegistration(reg);
+    if (!id) {
+      setLoading(false);
+      return;
     }
+
+    fetch(`/api/registrations/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Not found");
+        return res.json();
+      })
+      .then((data) => setRegistration(data))
+      .catch(() => setRegistration(null))
+      .finally(() => setLoading(false));
   }, [id]);
+
+  if (loading) {
+    return (
+      <div className="pt-20 min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-navy-200 border-t-golden-400 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!registration) {
     return (

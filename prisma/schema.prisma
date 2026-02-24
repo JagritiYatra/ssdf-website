@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Registration {
+  id          String   @id // SSDF-CANSAT-2026-XXXX
+  fullName    String
+  email       String
+  phone       String
+  photoUrl    String?
+  teamName    String
+  institution String
+  state       String
+  category    String // school | college | professional
+  teamMembers Json // [{name, role}]
+  createdAt   DateTime @default(now())
+
+  @@index([category])
+  @@index([createdAt])
+}

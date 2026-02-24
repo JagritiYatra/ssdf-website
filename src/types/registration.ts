@@ -10,7 +10,7 @@ export interface Registration {
   fullName: string;
   email: string;
   phone: string;
-  photo: string; // base64 data URL
+  photoUrl: string | null;
   teamName: string;
   institution: string;
   state: string;
@@ -23,7 +23,7 @@ export interface RegistrationFormData {
   fullName: string;
   email: string;
   phone: string;
-  photo: string;
+  photoUrl: string;
   teamName: string;
   institution: string;
   state: string;

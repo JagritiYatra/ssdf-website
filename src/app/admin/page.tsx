@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   Users,
   School,
@@ -11,48 +12,57 @@ import {
 import Link from "next/link";
 import { useRegistrations } from "@/hooks/useRegistrations";
 
+interface Stats {
+  total: number;
+  school: number;
+  college: number;
+  professional: number;
+}
+
 export default function AdminDashboard() {
-  const { registrations, loading } = useRegistrations();
+  const { registrations, loading: regsLoading } = useRegistrations();
+  const [stats, setStats] = useState<Stats>({ total: 0, school: 0, college: 0, professional: 0 });
+  const [loading, setLoading] = useState(true);
 
-  const total = registrations.length;
-  const school = registrations.filter((r) => r.category === "school").length;
-  const college = registrations.filter((r) => r.category === "college").length;
-  const professional = registrations.filter(
-    (r) => r.category === "professional"
-  ).length;
+  useEffect(() => {
+    fetch("/api/admin/stats", { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => setStats(data))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const stats = [
+  const statCards = [
     {
       label: "Total Registrations",
-      value: total,
+      value: stats.total,
       icon: Users,
       color: "bg-golden-400/10 text-golden-500",
       border: "border-golden-400/20",
     },
     {
       label: "School Teams",
-      value: school,
+      value: stats.school,
       icon: School,
       color: "bg-river-400/10 text-river-500",
       border: "border-river-400/20",
     },
     {
       label: "College Teams",
-      value: college,
+      value: stats.college,
       icon: GraduationCap,
       color: "bg-forest-400/10 text-forest-500",
       border: "border-forest-400/20",
     },
     {
       label: "Professional",
-      value: professional,
+      value: stats.professional,
       icon: Briefcase,
       color: "bg-navy-400/10 text-navy-500",
       border: "border-navy-300/20",
     },
   ];
 
-  if (loading) {
+  if (loading || regsLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="w-8 h-8 border-4 border-navy-200 border-t-golden-400 rounded-full animate-spin" />
@@ -80,7 +90,7 @@ export default function AdminDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {stats.map((stat) => {
+        {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
             <div
@@ -145,8 +155,7 @@ export default function AdminDashboard() {
               </thead>
               <tbody className="divide-y divide-navy-50">
                 {registrations
-                  .slice(-5)
-                  .reverse()
+                  .slice(0, 5)
                   .map((reg) => (
                     <tr
                       key={reg.id}
@@ -157,9 +166,9 @@ export default function AdminDashboard() {
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2.5">
-                          {reg.photo ? (
+                          {reg.photoUrl ? (
                             <img
-                              src={reg.photo}
+                              src={reg.photoUrl}
                               alt=""
                               className="w-7 h-7 rounded-full object-cover border border-navy-100"
                             />

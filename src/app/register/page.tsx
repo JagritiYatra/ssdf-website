@@ -12,7 +12,6 @@ import Card from "@/components/ui/Card";
 import PhotoUpload from "@/components/registration/PhotoUpload";
 import TeamMemberInput from "@/components/registration/TeamMemberInput";
 import { step1Schema, step2Schema } from "@/lib/validators";
-import { saveRegistration } from "@/lib/registration-store";
 import { RegistrationFormData } from "@/types/registration";
 
 const STATES = [
@@ -42,7 +41,7 @@ export default function RegisterPage() {
     fullName: "",
     email: "",
     phone: "",
-    photo: "",
+    photoUrl: "",
     teamName: "",
     institution: "",
     state: "",
@@ -98,14 +97,25 @@ export default function RegisterPage() {
 
   const prevStep = () => setStep((s) => Math.max(s - 1, 0));
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      const reg = saveRegistration(form);
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Registration failed");
+      }
+
+      const reg = await res.json();
       router.push(`/register/success?id=${reg.id}`);
-    } catch {
+    } catch (err) {
       setSubmitting(false);
-      alert("Registration failed. Please try again.");
+      alert(err instanceof Error ? err.message : "Registration failed. Please try again.");
     }
   };
 
@@ -200,9 +210,9 @@ export default function RegisterPage() {
                     error={errors.phone}
                   />
                   <PhotoUpload
-                    value={form.photo}
-                    onChange={(v) => updateField("photo", v)}
-                    error={errors.photo}
+                    value={form.photoUrl}
+                    onChange={(v) => updateField("photoUrl", v)}
+                    error={errors.photoUrl}
                   />
                 </motion.div>
               )}
@@ -273,11 +283,11 @@ export default function RegisterPage() {
                       <ReviewField label="Name" value={form.fullName} />
                       <ReviewField label="Email" value={form.email} />
                       <ReviewField label="Phone" value={form.phone} />
-                      {form.photo && (
+                      {form.photoUrl && (
                         <div className="flex items-center gap-2">
                           <span className="text-sm text-navy-500 w-24">Photo:</span>
                           <img
-                            src={form.photo}
+                            src={form.photoUrl}
                             alt="Preview"
                             className="w-12 h-12 rounded-full object-cover"
                           />

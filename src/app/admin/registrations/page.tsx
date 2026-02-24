@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { useRegistrations } from "@/hooks/useRegistrations";
-import { exportRegistrationsCSV } from "@/lib/registration-store";
 import { Registration, Category } from "@/types/registration";
 
 export default function RegistrationsPage() {
@@ -41,16 +40,20 @@ export default function RegistrationsPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleExport = () => {
-    const csv = exportRegistrationsCSV();
-    if (!csv) return;
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `ssdf-registrations-${new Date().toISOString().slice(0, 10)}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+  const handleExport = async () => {
+    try {
+      const res = await fetch("/api/admin/export", { credentials: "include" });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `ssdf-registrations-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("Export failed. Please try again.");
+    }
   };
 
   if (loading) {
@@ -181,9 +184,9 @@ export default function RegistrationsPage() {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2.5">
-                        {reg.photo ? (
+                        {reg.photoUrl ? (
                           <img
-                            src={reg.photo}
+                            src={reg.photoUrl}
                             alt=""
                             className="w-8 h-8 rounded-full object-cover border-2 border-navy-100"
                           />
@@ -247,9 +250,9 @@ export default function RegistrationsPage() {
           <div>
             {/* Modal header */}
             <div className="bg-navy-800 px-6 py-5 rounded-t-2xl text-center">
-              {selected.photo ? (
+              {selected.photoUrl ? (
                 <img
-                  src={selected.photo}
+                  src={selected.photoUrl}
                   alt={selected.fullName}
                   className="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-4 border-golden-400/30"
                 />

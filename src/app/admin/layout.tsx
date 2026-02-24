@@ -15,7 +15,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ADMIN_PASSWORD, SITE_SHORT_NAME } from "@/lib/constants";
+import { SITE_SHORT_NAME } from "@/lib/constants";
 
 const sidebarLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -33,31 +33,52 @@ export default function AdminLayout({
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [checking, setChecking] = useState(true);
+  const [loginLoading, setLoginLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem("ssdf-admin-auth");
-    if (stored === "true") setAuthenticated(true);
-    setChecking(false);
+    // Check if we have a valid session by hitting an authed endpoint
+    fetch("/api/admin/stats", { credentials: "include" })
+      .then((res) => {
+        if (res.ok) setAuthenticated(true);
+      })
+      .finally(() => setChecking(false));
   }, []);
 
   useEffect(() => {
     setSidebarOpen(false);
   }, [pathname]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem("ssdf-admin-auth", "true");
-      setAuthenticated(true);
-      setError("");
-    } else {
-      setError("Incorrect password. Please try again.");
+    setLoginLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        setAuthenticated(true);
+      } else {
+        setError("Incorrect password. Please try again.");
+      }
+    } catch {
+      setError("Login failed. Please try again.");
+    } finally {
+      setLoginLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("ssdf-admin-auth");
+  const handleLogout = async () => {
+    await fetch("/api/admin/logout", {
+      method: "POST",
+      credentials: "include",
+    });
     setAuthenticated(false);
     setPassword("");
   };
@@ -143,9 +164,10 @@ export default function AdminLayout({
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-golden-400 text-navy-900 font-semibold py-3 rounded-xl hover:bg-golden-500 transition-colors shadow-lg hover:shadow-xl cursor-pointer"
+                  disabled={loginLoading}
+                  className="w-full bg-golden-400 text-navy-900 font-semibold py-3 rounded-xl hover:bg-golden-500 transition-colors shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50"
                 >
-                  Sign In
+                  {loginLoading ? "Signing in..." : "Sign In"}
                 </button>
               </form>
 

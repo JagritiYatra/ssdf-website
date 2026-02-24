@@ -83,10 +83,11 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
         <div className="px-6 py-4 flex gap-5">
           {/* Photo + QR */}
           <div className="flex flex-col items-center gap-3">
-            {registration.photo ? (
+            {registration.photoUrl ? (
               <img
-                src={registration.photo}
+                src={registration.photoUrl}
                 alt={registration.fullName}
+                crossOrigin="anonymous"
                 style={{
                   width: 90,
                   height: 90,

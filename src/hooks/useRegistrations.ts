@@ -2,15 +2,23 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Registration } from "@/types/registration";
-import { getRegistrations } from "@/lib/registration-store";
 
 export function useRegistrations() {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const refresh = useCallback(() => {
-    setRegistrations(getRegistrations());
-    setLoading(false);
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/registrations", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setRegistrations(data);
+    } catch {
+      setRegistrations([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {

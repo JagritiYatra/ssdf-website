@@ -54,4 +54,3 @@ export const STATS = [
   { value: 80, suffix: "+", label: "Media Features" },
 ] as const;
 
-export const ADMIN_PASSWORD = "1q2w3e4r";

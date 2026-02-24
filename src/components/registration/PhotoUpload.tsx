@@ -2,31 +2,48 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { Camera, X } from "lucide-react";
+import { Camera, X, Loader2 } from "lucide-react";
 
 interface PhotoUploadProps {
   value: string;
-  onChange: (base64: string) => void;
+  onChange: (url: string) => void;
   error?: string;
 }
 
 export default function PhotoUpload({ value, onChange, error }: PhotoUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const processFile = (file: File) => {
+  const processFile = async (file: File) => {
     if (!file.type.startsWith("image/")) return;
     if (file.size > 2 * 1024 * 1024) {
       alert("Photo must be under 2MB");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      onChange(result);
-    };
-    reader.readAsDataURL(file);
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Upload failed");
+      }
+
+      const { url } = await res.json();
+      onChange(url);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -49,7 +66,7 @@ export default function PhotoUpload({ value, onChange, error }: PhotoUploadProps
             ? "border-red-400"
             : "border-navy-200 hover:border-navy-400"
         }`}
-        onClick={() => inputRef.current?.click()}
+        onClick={() => !uploading && inputRef.current?.click()}
         onDragOver={(e) => {
           e.preventDefault();
           setDragOver(true);
@@ -57,7 +74,12 @@ export default function PhotoUpload({ value, onChange, error }: PhotoUploadProps
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
       >
-        {value ? (
+        {uploading ? (
+          <div className="py-4">
+            <Loader2 className="mx-auto text-river-400 mb-2 animate-spin" size={32} />
+            <p className="text-sm text-navy-500">Uploading photo...</p>
+          </div>
+        ) : value ? (
           <div className="relative inline-block">
             <Image
               src={value}
