@@ -5,7 +5,7 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import ScrollToTop from "./ScrollToTop";
 
-const BARE_ROUTES = ["/admin", "/login", "/signup", "/forgot-password", "/dashboard"];
+const BARE_ROUTES = ["/admin", "/login", "/signup", "/forgot-password", "/dashboard", "/verify"];
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

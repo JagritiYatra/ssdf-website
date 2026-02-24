@@ -116,7 +116,7 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
               </div>
             )}
             <QRCodeSVG
-              value={registration.id}
+              value={`https://ssdf.org.in/verify/${registration.id}`}
               size={70}
               fgColor="#1B2D4F"
               bgColor="transparent"
