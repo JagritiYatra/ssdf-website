@@ -47,8 +47,7 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
       <div
         ref={cardRef}
         style={{
-          width: 640,
-          minHeight: 400,
+          width: 600,
           margin: "0 auto",
           backgroundColor: "#ffffff",
           borderRadius: 12,
@@ -57,112 +56,65 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
           boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
         }}
       >
-        {/* Header with logos */}
+        {/* Header — Event name + SSDF logo */}
         <div
           style={{
             backgroundColor: "#1B2D4F",
-            padding: "8px 16px",
+            padding: "10px 20px",
             display: "flex",
             alignItems: "center",
-            gap: 8,
+            gap: 10,
           }}
         >
-          {/* SSDF Logo */}
           <img
             src="/images/logo-transparent.png"
             alt="SSDF"
-            style={{ width: 34, height: 34, borderRadius: 4 }}
+            style={{ width: 38, height: 38, borderRadius: 6 }}
           />
-          {/* Event name & org */}
           <div style={{ flex: 1 }}>
             <div
               style={{
                 color: "#F0C030",
                 fontWeight: 700,
-                fontSize: 11,
-                lineHeight: "14px",
+                fontSize: 12,
+                lineHeight: "16px",
               }}
             >
               IN-SPACe Model Rocketry / CANSAT India 2026-27
             </div>
-            <div style={{ color: "#9FAFD0", fontSize: 10, lineHeight: "13px" }}>
+            <div style={{ color: "#9FAFD0", fontSize: 10, lineHeight: "14px" }}>
               Shrinarayani Science Development Foundation
             </div>
           </div>
-          {/* Partner logos */}
-          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-            <img
-              src="/images/partners/inspace.png"
-              alt="IN-SPACe"
-              style={{ height: 28, width: "auto" }}
-            />
-            <img
-              src="/images/partners/isro.png"
-              alt="ISRO"
-              style={{ height: 28, width: "auto" }}
-            />
-            <img
-              src="/images/partners/amrit-prayas.png"
-              alt="Amrit Prayas"
-              style={{ height: 28, width: "auto" }}
-            />
-            <img
-              src="/images/partners/bargad.png"
-              alt="Bargad"
-              style={{ height: 28, width: "auto" }}
-            />
-            <img
-              src="/images/partners/shashank-mani.png"
-              alt="Shashank Mani"
-              style={{ height: 28, width: "auto" }}
-            />
+          <div
+            style={{
+              color: "#F0C030",
+              fontWeight: 700,
+              fontSize: 11,
+              fontFamily: "monospace",
+              textAlign: "right",
+              whiteSpace: "nowrap",
+              backgroundColor: "rgba(240,192,48,0.1)",
+              padding: "4px 8px",
+              borderRadius: 6,
+            }}
+          >
+            {registration.id}
           </div>
         </div>
 
         {/* Golden accent line */}
         <div style={{ height: 3, backgroundColor: "#F0C030" }} />
 
-        {/* Registration ID bar */}
-        <div
-          style={{
-            backgroundColor: "#F5F7FB",
-            padding: "5px 16px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <span
-            style={{
-              color: "#1B2D4F",
-              fontWeight: 700,
-              fontSize: 11,
-              fontFamily: "monospace",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {registration.id}
-          </span>
-          <span
-            style={{
-              color: "#4A9AD9",
-              fontSize: 10,
-              fontWeight: 600,
-            }}
-          >
-            {categoryLabel}
-          </span>
-        </div>
-
         {/* Body */}
-        <div style={{ padding: "12px 16px", display: "flex" }}>
-          {/* Photo + QR */}
+        <div style={{ padding: "16px 20px", display: "flex", gap: 16 }}>
+          {/* Left: Photo + QR */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              marginRight: 16,
+              gap: 10,
             }}
           >
             {registration.photoUrl ? (
@@ -171,8 +123,8 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
                 alt={registration.fullName}
                 crossOrigin="anonymous"
                 style={{
-                  width: 84,
-                  height: 84,
+                  width: 90,
+                  height: 90,
                   borderRadius: "50%",
                   objectFit: "cover",
                   border: "3px solid #1B2D4F",
@@ -181,8 +133,8 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
             ) : (
               <div
                 style={{
-                  width: 84,
-                  height: 84,
+                  width: 90,
+                  height: 90,
                   borderRadius: "50%",
                   backgroundColor: "#E8EDF5",
                   border: "3px solid #1B2D4F",
@@ -191,41 +143,53 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
                   justifyContent: "center",
                   color: "#1B2D4F",
                   fontWeight: 700,
-                  fontSize: 26,
+                  fontSize: 28,
                 }}
               >
                 {registration.fullName.charAt(0)}
               </div>
             )}
-            <div style={{ marginTop: 8 }}>
+            <div
+              style={{
+                backgroundColor: "#ffffff",
+                padding: 4,
+                borderRadius: 6,
+                border: "1px solid #E8EDF5",
+              }}
+            >
               <QRCodeSVG
                 value={verifyUrl}
-                size={76}
+                size={72}
                 fgColor="#1B2D4F"
                 bgColor="#ffffff"
               />
             </div>
           </div>
 
-          {/* Details */}
-          <div style={{ flex: 1, paddingTop: 2 }}>
+          {/* Right: Details */}
+          <div style={{ flex: 1, paddingTop: 4 }}>
             <div
               style={{
                 color: "#1B2D4F",
                 fontWeight: 700,
-                fontSize: 18,
-                lineHeight: "22px",
-                marginBottom: 8,
+                fontSize: 20,
+                lineHeight: "24px",
+                marginBottom: 12,
               }}
             >
               {registration.fullName}
             </div>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
+              <InfoChip label="Category" value={categoryLabel} color="#4A9AD9" />
+              {registration.bloodGroup && (
+                <InfoChip label="Blood" value={registration.bloodGroup} color="#E05050" />
+              )}
+              <InfoChip label="State" value={registration.state} color="#3D8B6E" />
+            </div>
+
             <DetailRow label="Team" value={registration.teamName} />
             <DetailRow label="Institution" value={registration.institution} />
-            <DetailRow label="State" value={registration.state} />
-            {registration.bloodGroup && (
-              <DetailRow label="Blood Group" value={registration.bloodGroup} />
-            )}
             <DetailRow
               label="Members"
               value={registration.teamMembers.map((m) => m.name).join(", ")}
@@ -233,39 +197,46 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
           </div>
         </div>
 
+        {/* Partner logos strip */}
+        <div
+          style={{
+            padding: "8px 20px",
+            backgroundColor: "#F5F7FB",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 16,
+            borderTop: "1px solid #E8EDF5",
+          }}
+        >
+          <img src="/images/partners/inspace.png" alt="IN-SPACe" style={{ height: 22, width: "auto" }} />
+          <img src="/images/partners/amrit-prayas.jpg" alt="Amrit Prayas" style={{ height: 26, width: "auto" }} />
+          <img src="/images/partners/bargad.png" alt="Bargad" style={{ height: 26, width: "auto" }} />
+          <img src="/images/partners/jagriti.png" alt="Jagriti" style={{ height: 20, width: "auto" }} />
+        </div>
+
         {/* Footer — contact + tagline */}
         <div
           style={{
             backgroundColor: "#1B2D4F",
-            padding: "6px 16px",
+            padding: "7px 20px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
+          <div style={{ color: "#9FAFD0", fontSize: 9, lineHeight: "14px" }}>
+            887-870-5000 | www.ssdf.org.in | director@ssdf.org.in
+          </div>
           <div
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              color: "#F0C030",
+              fontSize: 10,
+              fontStyle: "italic",
+              lineHeight: "14px",
             }}
           >
-            <div
-              style={{
-                color: "#9FAFD0",
-                fontSize: 9,
-                lineHeight: "14px",
-              }}
-            >
-              887-870-5000 | www.ssdf.org.in | director@ssdf.org.in
-            </div>
-            <div
-              style={{
-                color: "#F0C030",
-                fontSize: 10,
-                fontStyle: "italic",
-                lineHeight: "14px",
-              }}
-            >
-              सा विद्या या विमुक्तये
-            </div>
+            सा विद्या या विमुक्तये
           </div>
         </div>
       </div>
@@ -278,6 +249,37 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
           Download ID Card as PNG
         </Button>
       </div>
+    </div>
+  );
+}
+
+function InfoChip({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: string;
+  color: string;
+}) {
+  return (
+    <div
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 4,
+        backgroundColor: `${color}10`,
+        border: `1px solid ${color}30`,
+        borderRadius: 20,
+        padding: "3px 10px",
+      }}
+    >
+      <span style={{ color, fontSize: 9, fontWeight: 600, textTransform: "uppercase" }}>
+        {label}:
+      </span>
+      <span style={{ color: "#1B2D4F", fontSize: 11, fontWeight: 700 }}>
+        {value}
+      </span>
     </div>
   );
 }
@@ -296,7 +298,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
         style={{
           color: "#4A9AD9",
           fontWeight: 600,
-          width: 82,
+          width: 78,
           flexShrink: 0,
         }}
       >

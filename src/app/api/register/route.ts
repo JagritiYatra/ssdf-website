@@ -45,6 +45,10 @@ export async function POST(request: NextRequest) {
       fullName: data.fullName,
       teamName: data.teamName,
       category: data.category,
+      institution: data.institution,
+      state: data.state,
+      bloodGroup: data.bloodGroup || undefined,
+      phone: data.phone,
     }).catch((err) => console.error("Confirmation email failed:", err));
 
     return jsonResponse(registration, 201);

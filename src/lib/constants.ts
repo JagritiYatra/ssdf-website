@@ -47,10 +47,9 @@ export const NAV_LINKS = [
 
 export const PARTNERS = [
   { name: "IN-SPACe", logo: "/images/partners/inspace.png", url: "https://www.inspace.gov.in/" },
-  { name: "ISRO", logo: "/images/partners/isro.png", url: "https://www.isro.gov.in/" },
-  { name: "Amrit Prayas", logo: "/images/partners/amrit-prayas.png", url: "#" },
+  { name: "Amrit Prayas", logo: "/images/partners/amrit-prayas.jpg", url: "#" },
   { name: "Bargad Amrit Sangathan", logo: "/images/partners/bargad.png", url: "#" },
-  { name: "Shashank Mani", logo: "/images/partners/shashank-mani.png", url: "#" },
+  { name: "Jagriti Enterprise Centre", logo: "/images/partners/jagriti.png", url: "https://www.jagriti.org/" },
 ] as const;
 
 export const STATS = [
