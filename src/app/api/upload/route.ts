@@ -29,7 +29,6 @@ export async function POST(request: NextRequest) {
     return jsonResponse({ url });
   } catch (error) {
     console.error("Upload error:", error);
-    const message = error instanceof Error ? error.message : "Upload failed";
-    return errorResponse(message, 500);
+    return errorResponse("Upload failed", 500);
   }
 }
