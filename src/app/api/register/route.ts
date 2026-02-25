@@ -39,6 +39,15 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Auto-create user account so they can login with OTP later
+    prisma.user
+      .upsert({
+        where: { email: data.email },
+        create: { email: data.email, name: data.fullName },
+        update: {},
+      })
+      .catch((err) => console.error("Auto user creation failed:", err));
+
     // Fire-and-forget confirmation email
     sendRegistrationConfirmation(data.email, {
       id: registration.id,

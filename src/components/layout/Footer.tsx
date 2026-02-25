@@ -9,50 +9,12 @@ import {
   CONTACT,
   NAV_LINKS,
   LEGAL_LINKS,
-  PARTNERS,
   SOCIAL_LINKS,
 } from "@/lib/constants";
 
 export default function Footer() {
   return (
     <footer className="bg-navy-900 text-navy-200">
-      {/* Partners Strip */}
-      <div className="border-b border-navy-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <p className="text-center text-xs font-semibold text-navy-400 mb-8 uppercase tracking-[0.2em]">
-            Our Partners & Collaborators
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
-            {PARTNERS.map((partner) => {
-              const isJpg = partner.logo.endsWith(".jpg") || partner.logo.endsWith(".jpeg");
-              return (
-                <a
-                  key={partner.name}
-                  href={partner.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative"
-                  title={partner.name}
-                >
-                  <div className={`rounded-xl p-5 md:p-6 transition-all duration-300 ${isJpg ? "bg-white/90 group-hover:bg-white" : "bg-white/10 group-hover:bg-white/20"}`}>
-                    <Image
-                      src={partner.logo}
-                      alt={partner.name}
-                      width={180}
-                      height={90}
-                      className={`h-14 md:h-20 w-auto object-contain transition-opacity ${isJpg ? "" : "brightness-0 invert opacity-80 group-hover:opacity-100"}`}
-                    />
-                  </div>
-                  <p className="text-center text-xs text-navy-400 mt-2 group-hover:text-navy-200 transition-colors">
-                    {partner.name}
-                  </p>
-                </a>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">

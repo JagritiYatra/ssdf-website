@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
@@ -160,20 +159,7 @@ export default function HeroSection() {
                   </Link>
                 </div>
 
-                {slide.showPartners && (
-                  <div className="mt-8 flex flex-wrap items-center gap-4 justify-center lg:justify-start">
-                    <span className="text-xs text-navy-400">In collaboration with</span>
-                    <div className="flex items-center gap-4">
-                      <Image
-                        src="/images/partners/inspace.png"
-                        alt="IN-SPACe"
-                        width={80}
-                        height={30}
-                        className="h-5 sm:h-6 w-auto brightness-0 invert opacity-50"
-                      />
-                    </div>
-                  </div>
-                )}
+                {slide.showPartners && <div className="mt-8" />}
 
                 {!slide.showPartners && (
                   <div className="mt-8 flex flex-wrap items-center gap-6 justify-center lg:justify-start">

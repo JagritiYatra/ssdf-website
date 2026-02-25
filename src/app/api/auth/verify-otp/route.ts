@@ -20,9 +20,19 @@ export async function POST(request: NextRequest) {
       return errorResponse("Invalid or expired OTP", 401);
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    let user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return errorResponse("User not found", 404);
+      // Fallback: auto-create from registration data
+      const registration = await prisma.registration.findFirst({
+        where: { email },
+        select: { fullName: true },
+      });
+      if (!registration) {
+        return errorResponse("User not found", 404);
+      }
+      user = await prisma.user.create({
+        data: { email, name: registration.fullName },
+      });
     }
 
     await createUserSession(user.id, user.email);

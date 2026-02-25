@@ -14,9 +14,19 @@ export async function POST(request: NextRequest) {
 
     const { email } = result.data;
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    let user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return errorResponse("No account found with this email", 404);
+      // Check if they have a registration — auto-create user account
+      const registration = await prisma.registration.findFirst({
+        where: { email },
+        select: { fullName: true },
+      });
+      if (!registration) {
+        return errorResponse("No account found with this email", 404);
+      }
+      user = await prisma.user.create({
+        data: { email, name: registration.fullName },
+      });
     }
 
     const otpResult = await generateAndSendOtp(email, "user-login");

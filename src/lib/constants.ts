@@ -46,6 +46,7 @@ export const NAV_LINKS = [
 ] as const;
 
 export const PARTNERS = [
+  { name: "SSDF", logo: "/images/logo-transparent.png", url: "https://ssdf.org.in" },
   { name: "IN-SPACe", logo: "/images/partners/inspace.png", url: "https://www.inspace.gov.in/" },
   { name: "Amrit Prayas", logo: "/images/partners/amrit-prayas.jpg", url: "#" },
   { name: "Bargad Amrit Sangathan", logo: "/images/partners/bargad.png", url: "#" },

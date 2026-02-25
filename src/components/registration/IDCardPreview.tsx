@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Download } from "lucide-react";
 import Button from "@/components/ui/Button";
@@ -14,20 +14,53 @@ interface IDCardPreviewProps {
 export default function IDCardPreview({ registration }: IDCardPreviewProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const [downloading, setDownloading] = useState(false);
+
   const handleDownload = async () => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || downloading) return;
+    setDownloading(true);
     try {
-      const canvas = await html2canvas(cardRef.current, {
+      const card = cardRef.current;
+
+      // Wait for all images inside the card to fully load
+      const images = card.querySelectorAll("img");
+      await Promise.all(
+        Array.from(images).map(
+          (img) =>
+            new Promise<void>((resolve) => {
+              if (img.complete && img.naturalHeight > 0) return resolve();
+              img.onload = () => resolve();
+              img.onerror = () => resolve();
+            })
+        )
+      );
+
+      // Temporarily remove overflow:hidden so html2canvas captures everything
+      const prevOverflow = card.style.overflow;
+      card.style.overflow = "visible";
+
+      const canvas = await html2canvas(card, {
         scale: 3,
         backgroundColor: "#ffffff",
         useCORS: true,
+        allowTaint: false,
+        width: card.scrollWidth,
+        height: card.scrollHeight,
+        windowWidth: card.scrollWidth,
+        windowHeight: card.scrollHeight,
       });
+
+      // Restore overflow
+      card.style.overflow = prevOverflow;
+
       const link = document.createElement("a");
       link.download = `${registration.id}-id-card.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.href = canvas.toDataURL("image/png", 1.0);
       link.click();
     } catch (err) {
       console.error("Failed to generate ID card:", err);
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -209,10 +242,10 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
             borderTop: "1px solid #E8EDF5",
           }}
         >
-          <img src="/images/partners/inspace.png" alt="IN-SPACe" style={{ height: 22, width: "auto" }} />
-          <img src="/images/partners/amrit-prayas.jpg" alt="Amrit Prayas" style={{ height: 26, width: "auto" }} />
-          <img src="/images/partners/bargad.png" alt="Bargad" style={{ height: 26, width: "auto" }} />
-          <img src="/images/partners/jagriti.png" alt="Jagriti" style={{ height: 20, width: "auto" }} />
+          <img src="/images/partners/inspace.png" alt="IN-SPACe" crossOrigin="anonymous" style={{ height: 28, width: "auto" }} />
+          <img src="/images/partners/amrit-prayas.jpg" alt="Amrit Prayas" crossOrigin="anonymous" style={{ height: 32, width: "auto" }} />
+          <img src="/images/partners/bargad.png" alt="Bargad" crossOrigin="anonymous" style={{ height: 32, width: "auto" }} />
+          <img src="/images/partners/jagriti.png" alt="Jagriti" crossOrigin="anonymous" style={{ height: 24, width: "auto" }} />
         </div>
 
         {/* Footer — contact + tagline */}
@@ -244,9 +277,9 @@ export default function IDCardPreview({ registration }: IDCardPreviewProps) {
 
       {/* Download Button */}
       <div className="text-center mt-6">
-        <Button onClick={handleDownload}>
+        <Button onClick={handleDownload} disabled={downloading}>
           <Download className="mr-2" size={18} />
-          Download ID Card as PNG
+          {downloading ? "Generating..." : "Download ID Card as PNG"}
         </Button>
       </div>
     </div>
